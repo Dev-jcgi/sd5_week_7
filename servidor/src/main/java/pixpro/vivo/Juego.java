@@ -87,6 +87,13 @@ class Juego {
 
     synchronized int puntosDe(String nombre) { return puntos.getOrDefault(nombre, 0); }
 
+    /** Lugar en el ranking (1 = primero); 0 si no tiene puntos. */
+    synchronized int lugarDe(String nombre) {
+        Integer mios = puntos.get(nombre);
+        if (mios == null) return 0;
+        return 1 + (int) puntos.values().stream().filter(p -> p > mios).count();
+    }
+
     synchronized JSONObject ranking(int max) {
         JSONArray top = new JSONArray();
         puntos.entrySet().stream().sorted((a, b) -> b.getValue() - a.getValue()).limit(max)

@@ -52,6 +52,8 @@ function abrir() {
     ws = null;
     // 1008 = el servidor nos rechazó (clave, exceso de mensajes): no insistir solos.
     if (cerrandoAdrede || ev.code === 1008) { setEstado({ fase: 'desconectado' }); return; }
+    // 1000 "Clase terminada": el profesor finalizó la sesión; no reconectar.
+    if (ev.code === 1000 && ev.reason === 'Clase terminada') { hola = null; setEstado({ fase: 'terminada' }); return; }
     programar();
   };
 }
@@ -117,6 +119,7 @@ export function useClase() {
       case 'conteo': return { ...s, conteo: m };
       case 'traza': return { ...s, trazas: [{ ...m, t: Date.now() }, ...s.trazas].slice(0, 40) };
       case 'error': return { ...s, error: m.mensaje };
+      case 'fin': return { ...s, fin: m, ranking: m.top, pregunta: null, resultado: null, juego: null, lote: null };
       default: return s;
     }
   })), []);

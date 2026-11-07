@@ -623,6 +623,7 @@ void laRespuestaCorrectaNoViajaHastaRevelar() throws Exception {
       <p className="d-eti">Marcador final</p>
       <h1>¡Gracias! <em>Podio</em> de la clase</h1>
       <p className="d-preg">El profesor toca “Mostrar podio”: el ranking lo calcula el servidor y llega a todos por WebSocket.</p>
+      <p className="d-sub">Para cerrar: “Finalizar sesión” manda a cada uno su resultado y cierra las conexiones con el código 1000.</p>
     </div>,
   ] },
 ];

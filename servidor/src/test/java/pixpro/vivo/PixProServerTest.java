@@ -151,4 +151,15 @@ class PixProServerTest {
         assertEquals("LoteSubido", m.getString("evento"));
         assertEquals(100, m.getInt("total"));
     }
+
+    @Test
+    void alFinalizarCadaEstudianteRecibeSuResultadoYSeCierraCon1000() throws Exception {
+        ClientePrueba prof = profesor();
+        ClientePrueba ana = estudiante("Ana");
+        prof.enviar("{\"tipo\":\"finalizar\"}");
+        JSONObject fin = ana.esperar("fin");
+        assertEquals(0, fin.getInt("puntos"));
+        assertEquals(1000, ana.codigoDeCierre());
+        prof.esperar("fin");
+    }
 }

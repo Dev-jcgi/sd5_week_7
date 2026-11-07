@@ -109,7 +109,7 @@ public class PixProServer extends WebSocketServer {
             case "respuesta" -> responder(cliente, msg);
             case "mover" -> { if (cliente.rol == Rol.ESTUDIANTE) arena.mover(cliente.nombre, msg.optInt("dx"), msg.optInt("dy")); }
             // Solo el profesor:
-            case "iniciarLote", "lanzar", "revelar", "ranking", "reiniciar", "iniciarJuego", "detenerJuego" -> {
+            case "iniciarLote", "lanzar", "revelar", "ranking", "reiniciar", "iniciarJuego", "detenerJuego", "finalizar" -> {
                 if (cliente.rol != Rol.PROFESOR) { enviar(conn, Mensajes.error("Solo el profesor puede hacer eso")); return; }
                 profesor(tipo, msg);
             }
@@ -203,7 +203,29 @@ public class PixProServer extends WebSocketServer {
             case "iniciarJuego" -> { juego.cerrarPregunta(); arena.iniciar(); }
             case "detenerJuego" -> { arena.detener(); broadcast(juego.ranking(10)); }
             case "reiniciar" -> { juego.reiniciar(); lote.cancelar("Profesor"); broadcast(juego.ranking(10)); }
+            case "finalizar" -> finalizar();
         }
+    }
+
+    /**
+     * Fin de la clase: detiene el juego y el lote, manda a cada estudiante su resultado final
+     * y cierra su conexión con 1000 (cierre normal). Los puntos se borran para la siguiente sesión.
+     */
+    private void finalizar() {
+        arena.detener();
+        lote.cancelar("Profesor");
+        juego.cerrarPregunta();
+        JSONObject ranking = juego.ranking(10);
+        for (WebSocket c : getConnections()) {
+            Cliente k = c.getAttachment();
+            if (k == null || k.rol != Rol.ESTUDIANTE) continue;
+            enviar(c, Mensajes.de("fin").put("puntos", juego.puntosDe(k.nombre))
+                    .put("lugar", juego.lugarDe(k.nombre)).put("top", ranking.getJSONArray("top")));
+            c.close(CloseFrame.NORMAL, "Clase terminada");
+        }
+        enviarAProfesores(Mensajes.de("fin").put("top", ranking.getJSONArray("top")));
+        Log.info("Clase finalizada por el profesor");
+        juego.reiniciar();
     }
 
     /* ─────────── utilidades ─────────── */

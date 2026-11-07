@@ -22,7 +22,7 @@ export function EstadoConexion() {
   const c = useConexion();
   const [, tic] = useState(0);
   useEffect(() => { if (c.fase !== 'esperando') return; const id = setInterval(() => tic((x) => x + 1), 500); return () => clearInterval(id); }, [c.fase]);
-  const txt = { conectado: 'Conectado', conectando: 'Conectando…', reconectando: 'Reconectando…', desconectado: 'Desconectado',
+  const txt = { terminada: 'Clase terminada', conectado: 'Conectado', conectando: 'Conectando…', reconectando: 'Reconectando…', desconectado: 'Desconectado',
     esperando: `Sin conexión · reintento en ${Math.max(0, Math.ceil(((c.siguienteEn || 0) - Date.now()) / 1000))} s` }[c.fase];
   return <span className={`estado mono ${c.fase}`} title={c.url}><i />{txt}</span>;
 }

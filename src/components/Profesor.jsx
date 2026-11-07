@@ -126,6 +126,11 @@ export default function Profesor() {
   const revelar = () => { enviar({ tipo: 'revelar' }); setEscena('resultado'); };
   const juego = (on) => { enviar({ tipo: on ? 'iniciarJuego' : 'detenerJuego' }); setEscena('juego'); setPanel(false); };
   const podio = () => { enviar({ tipo: 'ranking' }); setEscena('ranking'); };
+  const finalizar = () => {
+    if (!confirm('¿Finalizar la sesión? Se desconecta a todos los estudiantes, cada uno ve su resultado final y los puntos se reinician.')) return;
+    enviar({ tipo: 'finalizar' }); setEscena('fin'); setPanel(false);
+  };
+  const salir = () => { desconectar(); document.exitFullscreen?.().catch(() => {}); location.hash = '#/'; };
 
   let over = null;
   if (escena === 'pregunta' && p && !(c.resultado && c.resultado.id === p.id)) over = <PreguntaGrande p={p} conteo={c.conteo} conectados={c.conectados} />;
@@ -140,6 +145,12 @@ export default function Profesor() {
       </div>
     );
   } else if (escena === 'ranking') over = <Podio top={c.ranking} />;
+  else if (escena === 'fin') over = (
+    <div className="fin-sesion">
+      <Podio top={c.fin?.top || c.ranking} titulo="Sesión finalizada · podio final" />
+      <p className="note center-t">Todos los estudiantes recibieron su resultado y se cerraron sus conexiones (código 1000). Los puntos ya se reiniciaron.</p>
+    </div>
+  );
 
   return (
     <div className="presenter">
@@ -162,8 +173,10 @@ export default function Profesor() {
           ? <button className="btn" onClick={() => lanzar(lista[iSig].id)}>Siguiente pregunta</button>
           : <button className="btn" onClick={() => setEscena(null)}>Volver a la presentación</button>)}
         {escena === 'juego' && (jugando ? <button className="btn danger" onClick={() => juego(false)}>Terminar juego</button> : <button className="btn" onClick={() => juego(true)}>Jugar otra vez</button>)}
-        {over && <button className="cbtn" onClick={() => setEscena(null)}>Presentación (Esc)</button>}
+        {over && escena !== 'fin' && <button className="cbtn" onClick={() => setEscena(null)}>Presentación (Esc)</button>}
+        {escena === 'fin' && <button className="btn" onClick={salir}>Salir</button>}
         <span className="grow" />
+        {escena !== 'fin' && <button className="cbtn fin-btn" onClick={finalizar}>Finalizar sesión</button>}
         <button className="cbtn" onClick={() => setPanel(!panel)} aria-expanded={panel}>Panel en vivo (C)</button>
         <button className="cbtn" onClick={() => document.documentElement.requestFullscreen?.().catch(() => {})} aria-label="Pantalla completa">⛶</button>
       </nav>

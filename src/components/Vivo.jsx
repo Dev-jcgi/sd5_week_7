@@ -105,7 +105,19 @@ export default function Vivo() {
   const jugando = c.juego?.estado === 'jugando';
   const rechazado = con.fase === 'desconectado' && con.cierre?.codigo === 1008;
   let cuerpo;
-  if (rechazado) {
+  if (c.fin) {
+    const top = c.fin.top || [];
+    cuerpo = (
+      <div className="qcard center-t">
+        <p className="eyebrow">La clase terminó · ¡gracias!</p>
+        <p className="big ok">{c.fin.puntos ?? c.puntos} pts</p>
+        <h2>{c.fin.lugar ? `Quedaste en el lugar ${c.fin.lugar}` : 'Gracias por participar'}</h2>
+        <div className="board">{top.slice(0, 5).map((x, i) => <div key={x.nombre} className="lrow"><span className="r mono">#{i + 1}</span><span className="nm">{x.nombre}</span><span className="s mono">{x.puntos}</span></div>)}</div>
+        <p className="exp">El profesor cerró la conexión con el código 1000: cierre normal. Para la tarea, revisa el ejercicio de la semana.</p>
+        <div className="row-btns" style={{ justifyContent: 'center' }}><a className="btn" href="#/ejercicio">Ver el ejercicio</a><a className="btn ghost" href="#/presentacion">Repasar la presentación</a></div>
+      </div>
+    );
+  } else if (rechazado) {
     cuerpo = <div className="qcard center-t"><p className="big bad">1008</p><h2>El servidor cerró tu conexión</h2><p className="exp">{con.cierre.razon || CODIGOS[1008]}. Así se protege el servidor de un cliente que se porta mal.</p><button className="btn" onClick={entrar}>Volver a conectarme</button></div>;
   } else if (p && r && r.id === p.id) {
     cuerpo = (
@@ -139,8 +151,8 @@ export default function Vivo() {
       <main className="sbody">
         {c.error && <p className="note bad" role="alert">Servidor: {c.error}</p>}
         {cuerpo}
-        {c.lote && !jugando && <BarraLote lote={c.lote} onCancelar={() => enviar({ tipo: 'cancelarLote' })} />}
-        <div className="reacciones">
+        {c.lote && !jugando && !c.fin && <BarraLote lote={c.lote} onCancelar={() => enviar({ tipo: 'cancelarLote' })} />}
+        {!c.fin && <><div className="reacciones">
           {EMOJIS.map((e) => <button key={e} onClick={() => enviar({ tipo: 'reaccion', emoji: e })} aria-label={`Reaccionar ${e}`}>{e}</button>)}
         </div>
         <div className="row-btns">
@@ -151,7 +163,7 @@ export default function Vivo() {
           <summary>Laboratorio de seguridad (tema 4)</summary>
           <p className="exp">Simula un cliente tramposo: manda 30 mensajes en el mismo instante. El servidor permite 15 por segundo.</p>
           <button className="btn danger" onClick={() => rafaga(30)}>Enviar 30 mensajes de golpe</button>
-        </details>
+        </details></>}
       </main>
     </div>
   );

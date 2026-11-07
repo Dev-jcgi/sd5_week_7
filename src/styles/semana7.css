@@ -107,3 +107,5 @@
 .d-ocho.cinco p { font-size: 22px; overflow-wrap: break-word; }
 .d-break { gap: 14px; }
 .d-break .d-reloj { line-height: 1; }
+.fin-btn { border-color: var(--bad) !important; color: var(--bad) !important; }
+.fin-sesion { display: grid; gap: 12px; width: min(900px, 100%); }
