@@ -7,7 +7,7 @@ export default function Ejercicio() {
     ['TODO 2 · Presentarse', <>En <span className="mono">onOpen</span>, envía <span className="mono">{'{"tipo":"hola","rol":"estudiante","nombre":"…"}'}</span> con <span className="mono">sendText</span>.</>],
     ['TODO 3 · Mostrar el lote', <>En <span className="mono">mostrar</span>, cuando el tipo sea <span className="mono">lote</span>, imprime la barra: <span className="mono">L-1042 [########....] 200/450 · ImagenProcesada</span>.</>],
     ['TODO 4 · Reconectar', <>Si se cae la conexión, espera 1 s, 2 s, 4 s, 8 s… (máximo 10 s) y vuelve a llamar a <span className="mono">conectar()</span>.</>],
-    ['Probar', <><span className="mono">java RastreadorLote.java TuNombre wss://pixpro-vivo.onrender.com</span>. Teclas: <b>c</b> cancela el lote, <b>r</b> manda una reacción, <b>q</b> sale.</>],
+    ['Probar', <><span className="mono">java RastreadorLote.java TuNombre wss://pixpro-vivo.onrender.com</span>. Teclas: <b>l</b> pide un lote de prueba, <b>c</b> lo cancela, <b>r</b> manda una reacción, <b>q</b> sale.</>],
   ];
   return (
     <div className="page ejercicio7">

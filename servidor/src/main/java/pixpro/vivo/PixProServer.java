@@ -104,6 +104,8 @@ public class PixProServer extends WebSocketServer {
             case "hola" -> hola(conn, cliente, msg);
             case "reaccion" -> reaccion(cliente, msg);
             case "cancelarLote" -> lote.cancelar(cliente.nombre);
+            // Para practicar el ejercicio sin el profesor: un lote corto de 100 fotos (solo si no hay otro en curso).
+            case "pedirLote" -> lote.iniciar(100);
             case "respuesta" -> responder(cliente, msg);
             case "mover" -> { if (cliente.rol == Rol.ESTUDIANTE) arena.mover(cliente.nombre, msg.optInt("dx"), msg.optInt("dy")); }
             // Solo el profesor:

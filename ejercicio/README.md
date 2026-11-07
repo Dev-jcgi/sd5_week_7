@@ -8,7 +8,7 @@ java RastreadorLote.java TuNombre ws://localhost:8080              # tu servidor
 java RastreadorLote.java TuNombre wss://pixpro-vivo.onrender.com   # el de la clase
 ```
 
-Teclas: `c` cancela el lote · `r` manda una reacción 🚀 · `q` sale.
+Teclas: `l` pide un lote de prueba de 100 fotos · `c` lo cancela · `r` manda una reacción 🚀 · `q` sale.
 
 ## Los 4 TODO
 

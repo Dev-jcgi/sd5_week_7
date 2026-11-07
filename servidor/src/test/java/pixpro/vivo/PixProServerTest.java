@@ -142,4 +142,13 @@ class PixProServerTest {
         do { mundo = ana.esperar("mundo"); } while (mundo.getJSONArray("jugadores").isEmpty());
         assertEquals("Ana", mundo.getJSONArray("jugadores").getJSONArray(0).getString(0));
     }
+
+    @Test
+    void unEstudiantePuedePedirUnLoteDePrueba() throws Exception {
+        ClientePrueba ana = estudiante("Ana");
+        ana.enviar("{\"tipo\":\"pedirLote\"}");
+        JSONObject m = ana.esperar("lote");
+        assertEquals("LoteSubido", m.getString("evento"));
+        assertEquals(100, m.getInt("total"));
+    }
 }

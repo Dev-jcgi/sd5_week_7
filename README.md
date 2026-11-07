@@ -5,7 +5,7 @@ Clase de 120 minutos sobre WebSockets con PixPro como caso. **La propia clase es
 | Parte | Dónde | Qué es |
 |---|---|---|
 | Sitio (presentación + páginas en vivo) | `src/` → GitHub Pages | Presentación 2D (reveal.js), página del estudiante `#/vivo`, página del profesor `#/profesor`, simulación Polling/SSE/WebSocket |
-| Servidor WebSocket | [`servidor/`](servidor/README.md) → Render | Java 21 + [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) (sin Spring). Juego, lote, preguntas, seguridad y 10 pruebas JUnit |
+| Servidor WebSocket | [`servidor/`](servidor/README.md) → Render | Java 21 + [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) (sin Spring). Juego, lote, preguntas, seguridad y 11 pruebas JUnit |
 | Ejercicio | [`ejercicio/`](ejercicio/README.md) | Cliente WebSocket en Java puro (solo el JDK) con 4 TODO y su solución |
 | Diagramas | `archify/*.json` → `public/diagramas/*.html` | 9 diagramas hechos con [Archify](https://archify.si) |
 

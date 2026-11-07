@@ -134,6 +134,7 @@ export default function Vivo() {
         <span className="who">{c.yo?.nombre || nombre}</span>
         <span className="chip mono">{c.puntos} pts</span>
         <span className="chip mono">👥 {c.conectados}</span>
+        <button className="chip" onClick={() => { desconectar(); store.set('pixpro7-nombre', null); setDentro(false); }}>cambiar nombre</button>
       </header>
       <main className="sbody">
         {c.error && <p className="note bad" role="alert">Servidor: {c.error}</p>}

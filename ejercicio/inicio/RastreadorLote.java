@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  *
  * Ejecutar (Java 21):  java RastreadorLote.java Ana ws://localhost:8080
  *            o en clase: java RastreadorLote.java Ana wss://pixpro-vivo.onrender.com
- * Teclas: c = cancelar el lote · r = reacción 🚀 · q = salir
+ * Teclas: l = pedir un lote de prueba · c = cancelar el lote · r = reacción 🚀 · q = salir
  */
 public class RastreadorLote {
 
@@ -33,10 +33,11 @@ public class RastreadorLote {
             String t = teclado.nextLine().strip();
             if (ws == null) { System.out.println("(sin conexión todavía)"); continue; }
             switch (t) {
+                case "l" -> ws.sendText("{\"tipo\":\"pedirLote\"}", true);
                 case "c" -> ws.sendText("{\"tipo\":\"cancelarLote\"}", true);
                 case "r" -> ws.sendText("{\"tipo\":\"reaccion\",\"emoji\":\"🚀\"}", true);
                 case "q" -> { saliendo = true; ws.sendClose(WebSocket.NORMAL_CLOSURE, "adiós").join(); return; }
-                default -> System.out.println("Teclas: c = cancelar · r = reacción · q = salir");
+                default -> System.out.println("Teclas: l = pedir lote · c = cancelar · r = reacción · q = salir");
             }
         }
     }

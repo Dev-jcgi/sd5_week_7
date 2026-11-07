@@ -561,7 +561,7 @@ void laRespuestaCorrectaNoViajaHastaRevelar() throws Exception {
     prof.enviar("{\\"tipo\\":\\"lanzar\\",\\"id\\":\\"p1\\"}");
     assertFalse(ana.esperar("pregunta").has("correcta"));
 }`}</Code>
-      <p className="d-sub">10 pruebas: bienvenida, broadcast, Origin, clave, límite, tamaño, preguntas, permisos, lote y juego. <span className="mono">mvn test</span></p>
+      <p className="d-sub">11 pruebas: bienvenida, broadcast, Origin, clave, límite, tamaño, preguntas, permisos, lote, lote de prueba y juego. <span className="mono">mvn test</span></p>
     </>,
     <>
       <T tema="t5" eti="Ejercicio de la semana">Rastreador de lotes en Java puro</T>

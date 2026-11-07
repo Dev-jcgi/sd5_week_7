@@ -28,7 +28,7 @@ Servidor de la clase hecho con [Java-WebSocket](https://github.com/TooTallNate/J
 ## Comandos
 
 ```bash
-mvn test                      # 10 pruebas de integración (levantan el servidor de verdad)
+mvn test                      # 11 pruebas de integración (levantan el servidor de verdad)
 mvn package                   # target/pixpro-vivo.jar
 PROFESOR_CLAVE=prueba java -jar target/pixpro-vivo.jar
 ```
