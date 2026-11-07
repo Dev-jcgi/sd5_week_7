@@ -18,6 +18,7 @@ export default function Landing() {
           <a className="btn" href="#/vivo">Entrar a la clase en vivo</a>
           <a className="btn ghost" href="#/presentacion">Ver la presentación</a>
           <a className="btn ghost" href="#/ejercicio">Ejercicio</a>
+          <a className="btn ghost" href="#/profesor">Profesor (clave)</a>
         </div>
       </section>
       <section>

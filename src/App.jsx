@@ -6,7 +6,7 @@ import Profesor from './components/Profesor.jsx';
 import Ejercicio from './components/Ejercicio.jsx';
 
 const route = () => (location.hash.split('?')[0] || '#/').replace(/^#/, '') || '/';
-const NAV = [['/', 'Inicio'], ['/vivo', 'En vivo'], ['/presentacion', 'Presentación'], ['/ejercicio', 'Ejercicio']];
+const NAV = [['/', 'Inicio'], ['/vivo', 'En vivo'], ['/presentacion', 'Presentación'], ['/ejercicio', 'Ejercicio'], ['/profesor', 'Profesor']];
 
 export default function App() {
   const [r, setR] = useState(route());

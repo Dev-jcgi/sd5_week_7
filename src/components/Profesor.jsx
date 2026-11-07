@@ -22,6 +22,7 @@ function Login({ onEntrar, error }) {
       <div className="field"><label htmlFor="clave">Clave del profesor</label><input id="clave" type="password" autoComplete="current-password" value={clave} onChange={(e) => setClave(e.target.value)} /></div>
       <button className="btn" disabled={!clave}>Conectar</button>
       {error && <p className="note bad" role="alert">{error}</p>}
+      <p className="note"><a href="#/">← Volver al inicio</a></p>
       <p className="note">Si el servidor de Render estaba dormido, la primera conexión puede tardar hasta un minuto: la página reintenta sola.</p>
     </form>
   );
