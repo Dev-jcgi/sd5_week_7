@@ -1,0 +1,98 @@
+{
+ "diagram_type": "sequence",
+ "schema_version": 1,
+ "meta": {
+  "title": "Vida de una conexión WebSocket",
+  "subtitle": "Empieza como HTTP (handshake), se convierte en WebSocket (101) y desde ahí viajan frames en los dos sentidos hasta que alguien la cierra.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/handshake.html"
+ },
+ "participants": [
+  {
+   "id": "cel",
+   "type": "frontend",
+   "label": "Celular",
+   "sublabel": "new WebSocket(url)"
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "PixProServer",
+   "sublabel": "Java-WebSocket"
+  }
+ ],
+ "segments": [
+  {
+   "from": 150,
+   "to": 300,
+   "label": "1 · Handshake (HTTP)"
+  },
+  {
+   "from": 306,
+   "to": 520,
+   "label": "2 · Mensajes (frames)"
+  },
+  {
+   "from": 536,
+   "to": 680,
+   "label": "3 · Latido y cierre"
+  }
+ ],
+ "messages": [
+  {
+   "from": "cel",
+   "to": "srv",
+   "y": 185,
+   "label": "GET · Upgrade: websocket · Origin · Sec-WebSocket-Key",
+   "variant": "emphasis"
+  },
+  {
+   "from": "srv",
+   "to": "cel",
+   "y": 240,
+   "label": "101 Switching Protocols · el servidor ejecuta onOpen",
+   "variant": "return"
+  },
+  {
+   "from": "cel",
+   "to": "srv",
+   "y": 340,
+   "label": "{\"tipo\":\"hola\",\"nombre\":\"Ana\"} → onMessage"
+  },
+  {
+   "from": "srv",
+   "to": "cel",
+   "y": 430,
+   "label": "texto: {\"tipo\":\"bienvenida\"}",
+   "variant": "return"
+  },
+  {
+   "from": "srv",
+   "to": "cel",
+   "y": 480,
+   "label": "broadcast: {\"tipo\":\"conectados\",\"total\":31}",
+   "variant": "emphasis"
+  },
+  {
+   "from": "srv",
+   "to": "cel",
+   "y": 570,
+   "label": "ping (cada 30 s)"
+  },
+  {
+   "from": "cel",
+   "to": "srv",
+   "y": 605,
+   "label": "pong (automático)",
+   "variant": "return"
+  },
+  {
+   "from": "cel",
+   "to": "srv",
+   "y": 650,
+   "label": "close 1000 · onClose(conn, 1000)",
+   "variant": "emphasis"
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+[
+  { "id": "e1", "actividad": 1, "segundos": 20,
+    "texto": "Pregunta de ejemplo: ¿qué protocolo mantiene una conexión abierta en ambos sentidos?",
+    "opciones": ["REST", "WebSocket", "FTP", "SMTP"],
+    "correcta": 1,
+    "explicacion": "Este es el archivo de EJEMPLO. Las preguntas reales se cargan en Render como Secret File (preguntas.json)." },
+  { "id": "e2", "actividad": 1, "segundos": 15,
+    "texto": "Pregunta de ejemplo: ¿qué código HTTP confirma el cambio a WebSocket?",
+    "opciones": ["200 OK", "301 Moved", "101 Switching Protocols", "404 Not Found"],
+    "correcta": 2,
+    "explicacion": "Archivo de ejemplo." }
+]

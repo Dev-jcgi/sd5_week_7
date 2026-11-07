@@ -1,0 +1,179 @@
+{
+ "diagram_type": "architecture",
+ "schema_version": 1,
+ "meta": {
+  "title": "PixPro · dónde va el WebSocket",
+  "subtitle": "Los comandos siguen entrando por REST. Lo nuevo es el Servicio de notificaciones: escucha lote.events y empuja el avance al navegador por WebSocket.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/pixpro-tiempo-real.html",
+  "views": [
+   {
+    "id": "v1",
+    "label": "1 · Comandos (REST)",
+    "focus": [
+     "spa",
+     "gw",
+     "cmd"
+    ],
+    "note": "POST /lotes responde 202 Accepted: el trabajo sigue en segundo plano."
+   },
+   {
+    "id": "v2",
+    "label": "2 · Eventos (broker)",
+    "focus": [
+     "cmd",
+     "broker",
+     "dig"
+    ],
+    "note": "El Digester procesa las fotos y publica ImagenProcesada en lote.events."
+   },
+   {
+    "id": "v3",
+    "label": "3 · Última milla (WebSocket)",
+    "focus": [
+     "broker",
+     "notif",
+     "spa"
+    ],
+    "note": "El servicio de notificaciones reenvía cada evento al navegador del dueño del lote."
+   }
+  ]
+ },
+ "components": [
+  {
+   "id": "spa",
+   "type": "frontend",
+   "label": "SPA PixPro",
+   "sublabel": "barra de progreso del lote",
+   "pos": [
+    30,
+    250
+   ],
+   "size": [
+    190,
+    78
+   ]
+  },
+  {
+   "id": "gw",
+   "type": "security",
+   "label": "API Gateway",
+   "sublabel": "rate limit · auth",
+   "pos": [
+    300,
+    110
+   ],
+   "size": [
+    180,
+    72
+   ]
+  },
+  {
+   "id": "cmd",
+   "type": "backend",
+   "label": "Command API",
+   "sublabel": "POST /lotes → 202",
+   "pos": [
+    560,
+    110
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "broker",
+   "type": "messagebus",
+   "label": "Broker",
+   "sublabel": "lote.events",
+   "pos": [
+    820,
+    250
+   ],
+   "size": [
+    180,
+    78
+   ],
+   "brand": "rabbitmq"
+  },
+  {
+   "id": "dig",
+   "type": "backend",
+   "label": "Digester IA",
+   "sublabel": "publica ImagenProcesada",
+   "pos": [
+    820,
+    430
+   ],
+   "size": [
+    180,
+    72
+   ]
+  },
+  {
+   "id": "notif",
+   "type": "backend",
+   "label": "Servicio de notificaciones",
+   "sublabel": "servidor WebSocket (Java)",
+   "pos": [
+    440,
+    400
+   ],
+   "size": [
+    230,
+    90
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Tiempo real (nuevo en la semana 7)",
+   "wraps": [
+    "notif"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "e1",
+   "from": "spa",
+   "to": "gw",
+   "label": "HTTPS · POST /lotes"
+  },
+  {
+   "id": "e2",
+   "from": "gw",
+   "to": "cmd",
+   "label": "comando SubirLote"
+  },
+  {
+   "id": "e3",
+   "from": "cmd",
+   "to": "broker",
+   "label": "LoteSubido"
+  },
+  {
+   "id": "e4",
+   "from": "dig",
+   "to": "broker",
+   "label": "ImagenProcesada"
+  },
+  {
+   "id": "e5",
+   "from": "broker",
+   "to": "notif",
+   "label": "se suscribe a lote.events",
+   "variant": "dashed"
+  },
+  {
+   "id": "e6",
+   "from": "notif",
+   "to": "spa",
+   "label": "wss:// · avance en vivo",
+   "variant": "emphasis"
+  }
+ ]
+}

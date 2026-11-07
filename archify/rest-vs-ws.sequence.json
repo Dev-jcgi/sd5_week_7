@@ -1,0 +1,119 @@
+{
+ "diagram_type": "sequence",
+ "schema_version": 1,
+ "meta": {
+  "title": "WebSocket vs. REST · ¿dónde va mi lote?",
+  "subtitle": "Arriba: con REST el navegador pregunta una y otra vez. Abajo: con WebSocket la conexión se abre una vez y el servidor avisa cuando hay algo.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/rest-vs-ws.html"
+ },
+ "participants": [
+  {
+   "id": "nav",
+   "type": "frontend",
+   "label": "Navegador",
+   "sublabel": "SPA de PixPro"
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "Servidor PixPro",
+   "sublabel": "lote L-1042"
+  }
+ ],
+ "segments": [
+  {
+   "from": 150,
+   "to": 420,
+   "label": "REST · polling cada 2 s"
+  },
+  {
+   "from": 440,
+   "to": 760,
+   "label": "WebSocket · una conexión"
+  }
+ ],
+ "messages": [
+  {
+   "from": "nav",
+   "to": "srv",
+   "y": 180,
+   "label": "GET /lotes/L-1042"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 215,
+   "label": "200 · sin cambios",
+   "variant": "return"
+  },
+  {
+   "from": "nav",
+   "to": "srv",
+   "y": 260,
+   "label": "GET /lotes/L-1042"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 295,
+   "label": "200 · sin cambios",
+   "variant": "return"
+  },
+  {
+   "from": "nav",
+   "to": "srv",
+   "y": 340,
+   "label": "GET /lotes/L-1042"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 375,
+   "label": "200 · 150/450 fotos",
+   "variant": "return"
+  },
+  {
+   "from": "nav",
+   "to": "srv",
+   "y": 470,
+   "label": "GET /ws · Upgrade: websocket",
+   "variant": "emphasis"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 505,
+   "label": "101 Switching Protocols",
+   "variant": "return"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 560,
+   "label": "lote · ImagenProcesada 150/450",
+   "variant": "emphasis"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 605,
+   "label": "lote · ImagenProcesada 300/450",
+   "variant": "emphasis"
+  },
+  {
+   "from": "nav",
+   "to": "srv",
+   "y": 650,
+   "label": "cancelarLote (por la misma conexión)"
+  },
+  {
+   "from": "srv",
+   "to": "nav",
+   "y": 695,
+   "label": "lote · LoteCancelado",
+   "variant": "emphasis"
+  }
+ ]
+}

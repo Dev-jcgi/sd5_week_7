@@ -1,0 +1,112 @@
+{
+ "diagram_type": "architecture",
+ "schema_version": 1,
+ "meta": {
+  "title": "Caza de píxeles · servidor autoritativo",
+  "subtitle": "Los celulares solo mandan su intención. El servidor calcula el mundo 15 veces por segundo y manda la misma foto a todos.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/juego.html"
+ },
+ "components": [
+  {
+   "id": "c1",
+   "type": "frontend",
+   "label": "Celular de Ana",
+   "sublabel": "flechas ◀ ▶ ▲ ▼",
+   "pos": [
+    40,
+    90
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "c2",
+   "type": "frontend",
+   "label": "Celular de Beto",
+   "sublabel": "flechas ◀ ▶ ▲ ▼",
+   "pos": [
+    40,
+    250
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "c3",
+   "type": "frontend",
+   "label": "30 celulares más",
+   "sublabel": "cada uno con su conexión",
+   "pos": [
+    40,
+    410
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "PixProServer · Arena",
+   "sublabel": "tick 15 veces por segundo",
+   "pos": [
+    420,
+    240
+   ],
+   "size": [
+    240,
+    96
+   ]
+  },
+  {
+   "id": "proy",
+   "type": "frontend",
+   "label": "Proyector del salón",
+   "sublabel": "pinta la foto del mundo",
+   "pos": [
+    840,
+    250
+   ],
+   "size": [
+    220,
+    72
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "e1",
+   "from": "c1",
+   "to": "srv",
+   "label": "mover dx=-1",
+   "variant": "emphasis"
+  },
+  {
+   "id": "e2",
+   "from": "c2",
+   "to": "srv",
+   "label": "mover dy=1",
+   "variant": "emphasis"
+  },
+  {
+   "id": "e3",
+   "from": "c3",
+   "to": "srv",
+   "label": "mover …"
+  },
+  {
+   "id": "e4",
+   "from": "srv",
+   "to": "proy",
+   "label": "mundo (broadcast)",
+   "variant": "dashed"
+  }
+ ]
+}

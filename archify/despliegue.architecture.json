@@ -1,0 +1,121 @@
+{
+ "diagram_type": "architecture",
+ "schema_version": 1,
+ "meta": {
+  "title": "Dónde vive cada pieza de la clase",
+  "subtitle": "La página es estática (GitHub Pages). El servidor WebSocket necesita estar siempre encendido: corre en Render dentro de un contenedor Docker.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/despliegue.html"
+ },
+ "components": [
+  {
+   "id": "repo",
+   "type": "external",
+   "label": "Repositorio sd5_week_7",
+   "sublabel": "GitHub",
+   "pos": [
+    40,
+    80
+   ],
+   "size": [
+    210,
+    72
+   ],
+   "brand": "github"
+  },
+  {
+   "id": "pages",
+   "type": "cloud",
+   "label": "GitHub Pages",
+   "sublabel": "jcgi.lat/sd5_week_7",
+   "pos": [
+    400,
+    80
+   ],
+   "size": [
+    210,
+    72
+   ],
+   "brand": "github-actions"
+  },
+  {
+   "id": "render",
+   "type": "cloud",
+   "label": "Render · plan gratis",
+   "sublabel": "pone el TLS (wss://)",
+   "pos": [
+    400,
+    320
+   ],
+   "size": [
+    210,
+    78
+   ],
+   "brand": "render"
+  },
+  {
+   "id": "docker",
+   "type": "backend",
+   "label": "Contenedor Docker",
+   "sublabel": "java -jar pixpro-vivo.jar",
+   "pos": [
+    760,
+    320
+   ],
+   "size": [
+    220,
+    78
+   ],
+   "brand": "docker"
+  },
+  {
+   "id": "cel",
+   "type": "frontend",
+   "label": "Celulares y proyector",
+   "sublabel": "navegador",
+   "pos": [
+    760,
+    80
+   ],
+   "size": [
+    220,
+    72
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "e1",
+   "from": "repo",
+   "to": "pages",
+   "label": "push → Actions publica el sitio"
+  },
+  {
+   "id": "e2",
+   "from": "repo",
+   "to": "render",
+   "label": "push → Render construye la imagen",
+   "variant": "dashed"
+  },
+  {
+   "id": "e3",
+   "from": "pages",
+   "to": "cel",
+   "label": "HTTPS · la página"
+  },
+  {
+   "id": "e4",
+   "from": "cel",
+   "to": "render",
+   "label": "wss://pixpro-vivo.onrender.com",
+   "variant": "emphasis"
+  },
+  {
+   "id": "e5",
+   "from": "render",
+   "to": "docker",
+   "label": "ws:// al puerto 10000"
+  }
+ ]
+}

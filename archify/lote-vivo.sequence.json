@@ -1,0 +1,127 @@
+{
+ "diagram_type": "sequence",
+ "schema_version": 1,
+ "meta": {
+  "title": "PixPro · un lote en vivo de punta a punta",
+  "subtitle": "REST para el comando, broker para los eventos y WebSocket para avisar al navegador. Cada pieza hace lo que mejor sabe hacer.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/lote-vivo.html"
+ },
+ "participants": [
+  {
+   "id": "spa",
+   "type": "frontend",
+   "label": "SPA PixPro",
+   "sublabel": "navegador"
+  },
+  {
+   "id": "cmd",
+   "type": "backend",
+   "label": "Command API",
+   "sublabel": "REST"
+  },
+  {
+   "id": "brk",
+   "type": "messagebus",
+   "label": "Broker",
+   "sublabel": "lote.events"
+  },
+  {
+   "id": "dig",
+   "type": "backend",
+   "label": "Digester IA",
+   "sublabel": "procesa fotos"
+  },
+  {
+   "id": "ntf",
+   "type": "backend",
+   "label": "Notificaciones",
+   "sublabel": "servidor WebSocket"
+  }
+ ],
+ "segments": [
+  {
+   "from": 150,
+   "to": 300,
+   "label": "1 · Comando (REST)"
+  },
+  {
+   "from": 316,
+   "to": 560,
+   "label": "2 · Eventos (broker)"
+  },
+  {
+   "from": 576,
+   "to": 700,
+   "label": "3 · Aviso (WebSocket)"
+  }
+ ],
+ "messages": [
+  {
+   "from": "spa",
+   "to": "cmd",
+   "y": 185,
+   "label": "POST /lotes (450 fotos)",
+   "variant": "emphasis"
+  },
+  {
+   "from": "cmd",
+   "to": "spa",
+   "y": 225,
+   "label": "202 Accepted · L-1042",
+   "variant": "return"
+  },
+  {
+   "from": "spa",
+   "to": "ntf",
+   "y": 270,
+   "label": "wss:// · seguir L-1042"
+  },
+  {
+   "from": "cmd",
+   "to": "brk",
+   "y": 350,
+   "label": "LoteSubido"
+  },
+  {
+   "from": "brk",
+   "to": "dig",
+   "y": 395,
+   "label": "LoteSubido"
+  },
+  {
+   "from": "dig",
+   "to": "brk",
+   "y": 445,
+   "label": "ImagenProcesada (×450)",
+   "variant": "emphasis"
+  },
+  {
+   "from": "brk",
+   "to": "ntf",
+   "y": 495,
+   "label": "ImagenProcesada"
+  },
+  {
+   "from": "dig",
+   "to": "brk",
+   "y": 535,
+   "label": "LoteCompletado"
+  },
+  {
+   "from": "ntf",
+   "to": "spa",
+   "y": 610,
+   "label": "lote · 300/450",
+   "variant": "emphasis"
+  },
+  {
+   "from": "ntf",
+   "to": "spa",
+   "y": 660,
+   "label": "lote · LoteCompletado ✓",
+   "variant": "emphasis"
+  }
+ ]
+}

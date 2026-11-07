@@ -1,0 +1,5 @@
+node_modules/
+dist/
+servidor/target/
+servidor/preguntas.json
+.DS_Store

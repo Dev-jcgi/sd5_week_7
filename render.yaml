@@ -1,0 +1,14 @@
+# Render Blueprint: crea el servidor WebSocket de la clase (plan gratuito).
+# En Render: New → Blueprint → elige este repositorio.
+services:
+  - type: web
+    name: pixpro-vivo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./servidor/Dockerfile
+    dockerContext: ./servidor
+    envVars:
+      - key: PROFESOR_CLAVE
+        sync: false          # Render te la pide al crear el servicio; no se guarda en GitHub
+      - key: ORIGENES_PERMITIDOS
+        value: https://jcgi.lat,https://dev-jcgi.github.io,http://localhost:5173

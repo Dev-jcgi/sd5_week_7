@@ -1,0 +1,143 @@
+{
+  "diagram_type": "workflow",
+  "schema_version": 2,
+  "meta": {
+    "title": "¿No llegan los mensajes? Ruta de depuración",
+    "subtitle": "Del síntoma a la causa: primero el navegador, luego el servidor y al final una prueba que lo reproduzca.",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "public/diagramas/depuracion.html",
+    "animation": "trace"
+  },
+  "lanes": [
+    {
+      "id": "nav",
+      "label": "Navegador (DevTools)"
+    },
+    {
+      "id": "srv",
+      "label": "Servidor (Render)"
+    },
+    {
+      "id": "test",
+      "label": "Pruebas"
+    }
+  ],
+  "phases": [
+    {
+      "id": "f1",
+      "label": "Observar",
+      "fromCol": 0,
+      "toCol": 2
+    },
+    {
+      "id": "f2",
+      "label": "Explicar",
+      "fromCol": 3,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "f3",
+      "label": "Reproducir",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "sint",
+    "net",
+    "msgs",
+    "cod",
+    "logs",
+    "cli",
+    "junit"
+  ],
+  "nodes": [
+    {
+      "id": "sint",
+      "lane": "nav",
+      "col": 0,
+      "type": "frontend",
+      "label": "Síntoma",
+      "sublabel": "la barra no avanza"
+    },
+    {
+      "id": "net",
+      "lane": "nav",
+      "col": 1,
+      "type": "frontend",
+      "label": "Network · WS",
+      "sublabel": "¿hay 101?"
+    },
+    {
+      "id": "msgs",
+      "lane": "nav",
+      "col": 2,
+      "type": "frontend",
+      "label": "Messages",
+      "sublabel": "↑ envía · ↓ recibe"
+    },
+    {
+      "id": "cod",
+      "lane": "nav",
+      "col": 3,
+      "type": "frontend",
+      "label": "Código de cierre",
+      "sublabel": "1006 · 1008 · 1009"
+    },
+    {
+      "id": "logs",
+      "lane": "srv",
+      "col": 3,
+      "type": "backend",
+      "label": "Logs de Render",
+      "sublabel": "Conexión abierta / Cerrada"
+    },
+    {
+      "id": "cli",
+      "lane": "test",
+      "col": 4,
+      "type": "backend",
+      "label": "Cliente Java",
+      "sublabel": "RastreadorLote.java"
+    },
+    {
+      "id": "junit",
+      "lane": "test",
+      "col": 5,
+      "type": "backend",
+      "label": "Prueba JUnit",
+      "sublabel": "PixProServerTest"
+    }
+  ],
+  "edges": [
+    {
+      "from": "sint",
+      "to": "net"
+    },
+    {
+      "from": "net",
+      "to": "msgs"
+    },
+    {
+      "from": "msgs",
+      "to": "cod"
+    },
+    {
+      "from": "cod",
+      "to": "logs",
+      "label": "compara"
+    },
+    {
+      "from": "logs",
+      "to": "cli"
+    },
+    {
+      "from": "cli",
+      "to": "junit",
+      "label": "automatiza"
+    }
+  ]
+}

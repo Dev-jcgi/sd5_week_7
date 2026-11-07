@@ -1,0 +1,122 @@
+{
+  "diagram_type": "workflow",
+  "schema_version": 2,
+  "meta": {
+    "title": "Las 6 capas de protección del servidor",
+    "subtitle": "Cada mensaje pasa por estos filtros. Si falla uno, la conexión se rechaza o se cierra con un código.",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "public/diagramas/seguridad.html",
+    "animation": "trace"
+  },
+  "lanes": [
+    {
+      "id": "red",
+      "label": "Red"
+    },
+    {
+      "id": "hs",
+      "label": "Handshake"
+    },
+    {
+      "id": "msg",
+      "label": "Cada mensaje"
+    }
+  ],
+  "phases": [
+    {
+      "id": "f1",
+      "label": "Antes de conectar",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "f2",
+      "label": "Mientras está conectado",
+      "fromCol": 2,
+      "toCol": 5,
+      "variant": "emphasis"
+    }
+  ],
+  "mainPath": [
+    "tls",
+    "origin",
+    "clave",
+    "limite",
+    "tam",
+    "valida"
+  ],
+  "nodes": [
+    {
+      "id": "tls",
+      "lane": "red",
+      "col": 0,
+      "type": "security",
+      "label": "wss:// (TLS)",
+      "sublabel": "lo pone Render"
+    },
+    {
+      "id": "origin",
+      "lane": "hs",
+      "col": 1,
+      "type": "security",
+      "label": "Revisar Origin",
+      "sublabel": "CSWSH · 403"
+    },
+    {
+      "id": "clave",
+      "lane": "msg",
+      "col": 2,
+      "type": "security",
+      "label": "Autenticar",
+      "sublabel": "clave · 1008"
+    },
+    {
+      "id": "limite",
+      "lane": "msg",
+      "col": 3,
+      "type": "security",
+      "label": "Límite",
+      "sublabel": "15/s · 1008"
+    },
+    {
+      "id": "tam",
+      "lane": "msg",
+      "col": 4,
+      "type": "security",
+      "label": "Tamaño",
+      "sublabel": "16 KB · 1009"
+    },
+    {
+      "id": "valida",
+      "lane": "msg",
+      "col": 5,
+      "type": "backend",
+      "label": "Validar datos",
+      "sublabel": "JSON, nombre, dx"
+    }
+  ],
+  "edges": [
+    {
+      "from": "tls",
+      "to": "origin"
+    },
+    {
+      "from": "origin",
+      "to": "clave",
+      "label": "101"
+    },
+    {
+      "from": "clave",
+      "to": "limite"
+    },
+    {
+      "from": "limite",
+      "to": "tam"
+    },
+    {
+      "from": "tam",
+      "to": "valida"
+    }
+  ]
+}

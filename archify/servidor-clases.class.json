@@ -1,0 +1,241 @@
+{
+ "diagram_type": "class",
+ "schema_version": 1,
+ "meta": {
+  "title": "El servidor Java por dentro",
+  "subtitle": "PixProServer hereda de WebSocketServer (la librería) y solo implementa los eventos. Lo demás son clases pequeñas con una sola tarea.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/servidor-clases.html"
+ },
+ "layout": {
+  "mode": "grid"
+ },
+ "types": [
+  {
+   "id": "wss",
+   "label": "WebSocketServer",
+   "kind": "abstract",
+   "row": 0,
+   "col": 1,
+   "sublabel": "librería Java-WebSocket",
+   "methods": [
+    {
+     "name": "onOpen",
+     "parameters": "conn, handshake",
+     "returns": "void",
+     "visibility": "public",
+     "abstract": true
+    },
+    {
+     "name": "onMessage",
+     "parameters": "conn, texto",
+     "returns": "void",
+     "visibility": "public",
+     "abstract": true
+    },
+    {
+     "name": "onClose",
+     "parameters": "conn, código, razón",
+     "returns": "void",
+     "visibility": "public",
+     "abstract": true
+    },
+    {
+     "name": "broadcast",
+     "parameters": "texto",
+     "returns": "void",
+     "visibility": "public"
+    }
+   ]
+  },
+  {
+   "id": "srv",
+   "label": "PixProServer",
+   "kind": "class",
+   "row": 1,
+   "col": 1,
+   "sublabel": "nuestro servidor",
+   "attributes": [
+    {
+     "name": "claveProfesor",
+     "type": "String",
+     "visibility": "private"
+    },
+    {
+     "name": "origenesPermitidos",
+     "type": "Set<String>",
+     "visibility": "private"
+    }
+   ],
+   "methods": [
+    {
+     "name": "onWebsocketHandshakeReceivedAsServer",
+     "parameters": "…",
+     "returns": "revisa Origin",
+     "visibility": "public"
+    },
+    {
+     "name": "main",
+     "parameters": "args",
+     "returns": "void",
+     "visibility": "public",
+     "static": true
+    }
+   ]
+  },
+  {
+   "id": "cli",
+   "label": "Cliente",
+   "kind": "class",
+   "row": 1,
+   "col": 0,
+   "sublabel": "datos de cada conexión",
+   "attributes": [
+    {
+     "name": "rol",
+     "type": "Rol",
+     "visibility": "package"
+    },
+    {
+     "name": "nombre",
+     "type": "String",
+     "visibility": "package"
+    },
+    {
+     "name": "limite",
+     "type": "LimiteMensajes",
+     "visibility": "package"
+    }
+   ]
+  },
+  {
+   "id": "lim",
+   "label": "LimiteMensajes",
+   "kind": "class",
+   "row": 2,
+   "col": 0,
+   "sublabel": "máx. 15 por segundo",
+   "methods": [
+    {
+     "name": "permitir",
+     "parameters": "",
+     "returns": "boolean",
+     "visibility": "package"
+    }
+   ]
+  },
+  {
+   "id": "lote",
+   "label": "Lote",
+   "kind": "class",
+   "row": 1,
+   "col": 2,
+   "sublabel": "simula lote.events",
+   "methods": [
+    {
+     "name": "iniciar",
+     "parameters": "fotos",
+     "returns": "void",
+     "visibility": "package"
+    },
+    {
+     "name": "cancelar",
+     "parameters": "quien",
+     "returns": "void",
+     "visibility": "package"
+    }
+   ]
+  },
+  {
+   "id": "juego",
+   "label": "Juego",
+   "kind": "class",
+   "row": 2,
+   "col": 1,
+   "sublabel": "preguntas y puntos",
+   "methods": [
+    {
+     "name": "lanzar",
+     "parameters": "id",
+     "returns": "JSONObject",
+     "visibility": "package"
+    },
+    {
+     "name": "responder",
+     "parameters": "nombre, id, opción",
+     "returns": "boolean",
+     "visibility": "package"
+    },
+    {
+     "name": "revelar",
+     "parameters": "",
+     "returns": "JSONObject",
+     "visibility": "package"
+    }
+   ]
+  },
+  {
+   "id": "arena",
+   "label": "Arena",
+   "kind": "class",
+   "row": 2,
+   "col": 2,
+   "sublabel": "Caza de píxeles",
+   "methods": [
+    {
+     "name": "mover",
+     "parameters": "nombre, dx, dy",
+     "returns": "void",
+     "visibility": "package"
+    },
+    {
+     "name": "tick",
+     "parameters": "",
+     "returns": "void",
+     "visibility": "private"
+    }
+   ]
+  }
+ ],
+ "relationships": [
+  {
+   "from": "srv",
+   "to": "wss",
+   "kind": "inheritance",
+   "label": "extends"
+  },
+  {
+   "from": "srv",
+   "to": "cli",
+   "kind": "association",
+   "label": "conn.getAttachment()"
+  },
+  {
+   "from": "cli",
+   "to": "lim",
+   "kind": "composition"
+  },
+  {
+   "from": "srv",
+   "to": "lote",
+   "kind": "composition"
+  },
+  {
+   "from": "srv",
+   "to": "juego",
+   "kind": "composition"
+  },
+  {
+   "from": "srv",
+   "to": "arena",
+   "kind": "composition"
+  },
+  {
+   "from": "arena",
+   "to": "juego",
+   "kind": "dependency",
+   "label": "suma puntos"
+  }
+ ]
+}

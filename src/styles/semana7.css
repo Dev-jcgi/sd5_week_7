@@ -1,0 +1,109 @@
+/* Semana 7 · WebSockets: estado de conexión, página En vivo, juego, lote, comparador y diapositivas nuevas. */
+
+/* ── estado de la conexión ── */
+.estado { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface2); white-space: nowrap; }
+.estado i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+.estado.conectado i { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+.estado.conectando i, .estado.reconectando i, .estado.esperando i { background: #FFD166; animation: latido 1s infinite; }
+.estado.desconectado i { background: var(--bad); }
+@keyframes latido { 50% { opacity: 0.25; } }
+
+/* ── log de mensajes (como DevTools) ── */
+.msglog { display: grid; gap: 4px; max-height: 320px; overflow: auto; background: #07080C; border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
+.msglog-h { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.msg { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; font-size: 12.5px; }
+.msg code { font-family: var(--f-mono); overflow-wrap: anywhere; color: #C9D1DC; }
+.msg .dir { font-weight: 700; }
+.msg.up .dir { color: var(--ok); }
+.msg.down .dir { color: var(--bad); }
+.drawer .msglog .msg.up .dir { color: #6EA8FF; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── página En vivo ── */
+.vivo .sbody { display: grid; gap: 14px; padding: 14px max(16px, env(safe-area-inset-left, 0px)) 40px; max-width: 760px; margin: 0 auto; }
+.vivo .sbar { flex-wrap: wrap; }
+.reacciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.reacciones button { font-size: 28px; width: 56px; height: 56px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); }
+.reacciones button:active { transform: scale(0.92); }
+.lab { background: var(--surface); border: 1px dashed var(--line); border-radius: 16px; padding: 12px 16px; }
+.lab summary { cursor: pointer; font-weight: 700; }
+.lab[open] { display: grid; gap: 10px; }
+
+/* ── lote de PixPro ── */
+.lote { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; display: grid; gap: 10px; }
+.lote-h { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.lote-barra { height: 18px; border-radius: 999px; background: #07080C; overflow: hidden; border: 1px solid var(--line); }
+.lote-barra i { display: block; height: 100%; background: linear-gradient(90deg, #6EA8FF, #C6F33A); transition: width 0.25s linear; }
+.lote.LoteCancelado .lote-barra i { background: var(--bad); }
+.lote.LoteCompletado { border-color: var(--ok); }
+.lote-flota { position: absolute; left: 24px; bottom: 24px; width: min(520px, 45vw); z-index: 6; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); border-radius: 18px; }
+
+/* ── juego: Caza de píxeles ── */
+.arena-cv { width: 100%; height: auto; aspect-ratio: 1000 / 560; background: #07080C; border: 1px solid var(--line); border-radius: 16px; touch-action: none; }
+.arena-cv.grande { max-height: calc(100vh - 220px); width: auto; max-width: 100%; }
+.escena-juego { display: grid; gap: 14px; justify-items: center; width: 100%; }
+.juego-h { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; justify-content: center; }
+.juego-h h2 { font-size: 40px; }
+.control { display: grid; gap: 10px; justify-items: center; }
+.dpad { display: grid; grid-template-columns: repeat(3, 84px); grid-template-rows: repeat(3, 84px); gap: 8px; user-select: none; -webkit-user-select: none; touch-action: none; }
+.pad { border: 0; border-radius: 20px; background: var(--surface2); border: 1px solid var(--line); font-size: 30px; color: var(--accent); }
+.pad:active { background: var(--accent); color: var(--accent-ink); }
+.pad.up { grid-area: 1 / 2; } .pad.left { grid-area: 2 / 1; } .pad.right { grid-area: 2 / 3; } .pad.down { grid-area: 3 / 2; }
+
+/* ── reacciones que flotan sobre la presentación ── */
+.flota { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 7; }
+.flota span { position: absolute; bottom: -60px; font-size: 54px; display: grid; justify-items: center; animation: sube 3.2s ease-out forwards; }
+.flota small { font-size: 13px; font-family: var(--f-mono); color: var(--fg); background: rgba(0, 0, 0, 0.55); padding: 1px 8px; border-radius: 999px; }
+@keyframes sube { to { transform: translateY(-75vh); opacity: 0; } }
+.pin-badge { display: flex; gap: 10px; align-items: center; }
+
+/* ── comparador Polling / SSE / WebSocket ── */
+.comparador { display: grid; gap: 12px; }
+.comp-ctrl { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.comp-t { color: var(--muted); font-size: 18px; margin-left: auto; }
+.comp-carril { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: auto auto; column-gap: 18px; border-left: 6px solid var(--c); background: rgba(255, 255, 255, 0.025); border-radius: 12px; padding: 6px 14px; }
+.comp-nom { grid-row: span 2; display: grid; align-content: center; gap: 4px; }
+.comp-nom b { font-size: 24px; color: var(--c); font-family: var(--f-display); }
+.comp-nom span { color: var(--muted); font-size: 16px; }
+.comp-svg { width: 100%; height: 132px; }
+.comp-svg .nodo { fill: #1A1D28; stroke: #3A4152; stroke-width: 2; }
+.comp-svg .nodo.srv { stroke: var(--c); }
+.comp-svg .nodo-t { fill: #ECEEF4; font: 700 17px var(--f-body); text-anchor: middle; }
+.comp-svg .nodo-v { fill: #9298AA; font: 15px var(--f-mono); text-anchor: middle; }
+.comp-svg .tubo { stroke: var(--c); stroke-width: 3; stroke-dasharray: 2 6; opacity: 0.7; }
+.comp-svg .viaje-t { font: 600 14px var(--f-mono); text-anchor: middle; }
+.comp-num { display: flex; gap: 24px; flex-wrap: wrap; font-size: 16px; color: var(--muted); }
+.comp-num b { color: var(--fg); font-size: 20px; }
+
+/* ── diapositivas ── */
+.d-vivo { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; color: var(--ok); }
+.d-vivo i { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px var(--ok); animation: latido 1.2s infinite; }
+
+/* ── portada y ejercicio ── */
+.landing7, .ejercicio7 { max-width: 1100px; margin: 0 auto; padding: 48px max(16px, env(safe-area-inset-left, 0px)) 80px; display: grid; gap: 40px; }
+.ejercicio7 { gap: 18px; max-width: 860px; }
+.hero7 { display: grid; gap: 18px; }
+.h-xl { font-size: clamp(40px, 7vw, 84px); }
+.h-xl em { font-style: normal; color: var(--accent); }
+.temas7 { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 12px; }
+.temas7 a { text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: 16px; padding: 16px; display: grid; gap: 6px; font-weight: 600; }
+.temas7 a span { color: var(--c); font-size: 22px; }
+.diags7 { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.diags7 a { text-decoration: none; border: 1px solid var(--line); background: var(--surface); padding: 10px 14px; border-radius: 999px; font-size: 14px; }
+.pasos7 { display: grid; gap: 12px; padding-left: 22px; }
+.pasos7 li { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; }
+.pasos7 .mono { overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+  .comp-carril { grid-template-columns: 1fr; }
+  .dpad { grid-template-columns: repeat(3, 76px); grid-template-rows: repeat(3, 76px); }
+  .lote-flota { width: calc(100% - 32px); left: 16px; bottom: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flota span, .estado i, .d-vivo i { animation: none; }
+}
+
+/* ajustes de diapositivas */
+.d-ocho.cinco { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.d-ocho.cinco p { font-size: 22px; overflow-wrap: break-word; }
+.d-break { gap: 14px; }
+.d-break .d-reloj { line-height: 1; }
