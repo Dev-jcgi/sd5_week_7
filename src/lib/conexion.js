@@ -25,6 +25,8 @@ let hola = null;          // primer mensaje que se reenvía al reconectar
 let intentos = 0;
 let reintento = null;
 let cerrandoAdrede = false;
+// Motivo de cierre avisado por el servidor con un mensaje (el proxy de Render puede borrar el código del cierre).
+let finAvisado = null;
 const oyentes = new Set();
 let estado = { fase: 'desconectado', url: urlServidor(), siguienteEn: null, cierre: null, log: [], seq: 0 };
 const subs = new Set();
@@ -44,12 +46,15 @@ function abrir() {
   };
   ws.onmessage = (ev) => {
     let m; try { m = JSON.parse(ev.data); } catch { return; }
+    if (m.tipo === 'expulsado') finAvisado = { fase: 'desconectado', cierre: { codigo: m.codigo || 1008, razon: m.mensaje } };
+    if (m.tipo === 'fin') finAvisado = { fase: 'terminada', cierre: { codigo: 1000, razon: 'Clase terminada' } };
     if (m.tipo !== 'mundo' && !(m.tipo === 'lote' && m.evento === 'ImagenProcesada' && m.hechas % 50)) anotar('↓', ev.data);
     oyentes.forEach((f) => f(m));
   };
   ws.onclose = (ev) => {
-    setEstado({ cierre: { codigo: ev.code, razon: ev.reason } });
     ws = null;
+    if (finAvisado) { const f = finAvisado; finAvisado = null; hola = null; setEstado(f); return; }
+    setEstado({ cierre: { codigo: ev.code, razon: ev.reason } });
     // 1008 = el servidor nos rechazó (clave, exceso de mensajes): no insistir solos.
     if (cerrandoAdrede || ev.code === 1008) { setEstado({ fase: 'desconectado' }); return; }
     // 1000 "Clase terminada": el profesor finalizó la sesión; no reconectar.
@@ -66,6 +71,7 @@ function programar() {
 
 export function conectar(primerMensaje) {
   hola = primerMensaje;
+  finAvisado = null;
   if (ws && ws.readyState <= 1) { if (ws.readyState === 1) enviar(hola); return; }
   intentos = 0;
   abrir();

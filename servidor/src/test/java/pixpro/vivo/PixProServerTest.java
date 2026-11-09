@@ -75,6 +75,7 @@ class PixProServerTest {
     void unaClaveIncorrectaCierraConElCodigo1008() throws Exception {
         ClientePrueba c = ClientePrueba.conectar(puerto, ORIGEN);
         c.enviar("{\"tipo\":\"hola\",\"rol\":\"profesor\",\"clave\":\"adivinando\"}");
+        assertEquals("Clave incorrecta", c.esperar("expulsado").getString("mensaje")); // el motivo llega antes del cierre
         assertEquals(1008, c.codigoDeCierre());
     }
 

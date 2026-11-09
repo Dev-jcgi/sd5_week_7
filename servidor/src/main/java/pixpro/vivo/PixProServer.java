@@ -81,7 +81,7 @@ public class PixProServer extends WebSocketServer {
         // Protección: máximo 15 mensajes por segundo por conexión.
         if (!cliente.limite.permitir()) {
             Log.info("Cerrada por exceso de mensajes: " + cliente.nombre);
-            conn.close(CloseFrame.POLICY_VALIDATION, "Demasiados mensajes por segundo");
+            expulsar(conn, "Demasiados mensajes por segundo");
             return;
         }
 
@@ -144,7 +144,8 @@ public class PixProServer extends WebSocketServer {
         if ("profesor".equals(msg.optString("rol"))) {
             // Autenticación: la clave vive en una variable de entorno del servidor, nunca en el código.
             if (claveProfesor == null || claveProfesor.isBlank() || !claveProfesor.equals(msg.optString("clave"))) {
-                conn.close(CloseFrame.POLICY_VALIDATION, "Clave incorrecta");
+                Log.info("Clave del profesor incorrecta");
+                expulsar(conn, "Clave incorrecta");
                 return;
             }
             cliente.rol = Rol.PROFESOR;
@@ -226,6 +227,16 @@ public class PixProServer extends WebSocketServer {
         enviarAProfesores(Mensajes.de("fin").put("top", ranking.getJSONArray("top")));
         Log.info("Clase finalizada por el profesor");
         juego.reiniciar();
+    }
+
+    /**
+     * Cierra la conexión con 1008 avisando ANTES el motivo con un mensaje normal.
+     * Algunos proxys (como el de Render) no dejan pasar el código del cierre:
+     * así el cliente siempre sabe por qué se cerró y no intenta reconectarse.
+     */
+    private void expulsar(WebSocket conn, String motivo) {
+        enviar(conn, Mensajes.de("expulsado").put("codigo", CloseFrame.POLICY_VALIDATION).put("mensaje", motivo));
+        conn.close(CloseFrame.POLICY_VALIDATION, motivo);
     }
 
     /* ─────────── utilidades ─────────── */
