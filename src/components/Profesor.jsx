@@ -12,7 +12,7 @@ import { BarraLote, useCuenta } from './Vivo.jsx';
    Todo lo que hace este panel es mandar mensajes JSON al servidor Java por la MISMA conexión WebSocket. */
 const LETRAS = ['A', 'B', 'C', 'D'];
 
-function Login({ onEntrar, error }) {
+function Login({ onEntrar, error, onSinConexion, estado }) {
   const [clave, setClave] = useState('');
   return (
     <form className="panel narrow" onSubmit={(e) => { e.preventDefault(); if (clave) onEntrar(clave); }}>
@@ -22,8 +22,11 @@ function Login({ onEntrar, error }) {
       <div className="field"><label htmlFor="clave">Clave del profesor</label><input id="clave" type="password" autoComplete="current-password" value={clave} onChange={(e) => setClave(e.target.value)} /></div>
       <button className="btn" disabled={!clave}>Conectar</button>
       {error && <p className="note bad" role="alert">{error}</p>}
-      <p className="note"><a href="#/">← Volver al inicio</a></p>
+      {estado}
       <p className="note">Si el servidor de Render estaba dormido, la primera conexión puede tardar hasta un minuto: la página reintenta sola.</p>
+      <button type="button" className="btn ghost" onClick={onSinConexion}>Ver la presentación sin conectar</button>
+      <p className="note">Sin conectar puedes presentar y mostrar el QR; los botones en vivo (actividades, juego, lote) aparecen al conectar.</p>
+      <p className="note"><a href="#/">← Volver al inicio</a></p>
     </form>
   );
 }
@@ -81,19 +84,21 @@ export default function Profesor() {
   const con = useConexion();
   const [c] = useClase();
   const [entrando, setEntrando] = useState(false);
+  const [verLogin, setVerLogin] = useState(true);
   const [escena, setEscena] = useState(null); // null | 'pregunta' | 'resultado' | 'juego' | 'ranking'
   const [panel, setPanel] = useState(false);
   const [pos, setPos] = useState({ h: 0, v: 0 });
   const deck = useRef(null);
 
   const dentro = c.yo?.rol === 'profesor'; // si se cae la red, se queda en la clase y reconecta solo
+  const dentroRef = useRef(dentro); dentroRef.current = dentro;
   const errorLogin = con.cierre?.codigo === 1008 ? 'Clave incorrecta (el servidor cerró con 1008).' : null;
   useEffect(() => () => desconectar(), []);
   useEffect(() => { if (c.resultado) celebrate(); }, [c.resultado]);
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.closest('input,textarea')) return;
-      if (e.key === 'c' || e.key === 'C') { e.preventDefault(); setPanel((x) => !x); } // C = control (V, B y . pausan reveal.js)
+      if ((e.key === 'c' || e.key === 'C') && dentroRef.current) { e.preventDefault(); setPanel((x) => !x); } // C = control (V, B y . pausan reveal.js)
       if (e.key === 'Escape') setEscena(null);
     };
     window.addEventListener('keydown', onKey);
@@ -106,14 +111,13 @@ export default function Profesor() {
     return g;
   }, [c.preguntas]);
 
-  if (!dentro) {
-    return (
-      <div className="page center-page">
-        <Login error={entrando && errorLogin} onEntrar={(clave) => { setEntrando(true); conectar({ tipo: 'hola', rol: 'profesor', clave }); }} />
-        {entrando && !errorLogin && <p className="note center-t"><EstadoConexion /> {con.url}</p>}
-      </div>
-    );
-  }
+  const login = !dentro && verLogin && (
+    <div className="login-modal">
+      <Login error={entrando && errorLogin} onSinConexion={() => setVerLogin(false)}
+        estado={entrando && !errorLogin ? <p className="note"><EstadoConexion /></p> : null}
+        onEntrar={(clave) => { setEntrando(true); conectar({ tipo: 'hola', rol: 'profesor', clave }); }} />
+    </div>
+  );
 
   const col = COLS[pos.h];
   const act = col?.act;
@@ -154,9 +158,10 @@ export default function Profesor() {
 
   return (
     <div className="presenter">
-      <div className="pin-badge"><EstadoConexion /><span className="mono">👥 {c.conectados}</span></div>
+      <div className="pin-badge">{dentro ? <><EstadoConexion /><span className="mono">👥 {c.conectados}</span></>
+        : <button className="btn" onClick={() => setVerLogin(true)}>Conectar clase en vivo</button>}</div>
       <div className="present-area">
-        <div className="host-stage"><Deck ref={deck} start={{ h: 0, v: 0 }} onChange={setPos} active={!over && !panel} /></div>
+        <div className="host-stage"><Deck ref={deck} start={{ h: 0, v: 0 }} onChange={setPos} active={!over && !panel && !login} /></div>
         {over && <div className="host-game">{over}</div>}
         {c.lote && !over && <div className="lote-flota"><BarraLote lote={c.lote} /></div>}
         <Reacciones lista={c.reacciones} />
@@ -164,10 +169,10 @@ export default function Profesor() {
 
       <nav className="ctrl" aria-label="Controles del profesor">
         {!over && <span className="mono cnum">{col?.tema ? `Tema ${TEMA[col.tema].n} · ${TEMA[col.tema].corto}` : col?.titulo} · {pos.h + 1}.{pos.v + 1}</span>}
-        {!over && act && porAct[act] && <button className="btn" onClick={() => lanzar(porAct[act][0].id)}>Lanzar actividad {act}</button>}
-        {!over && col?.lote && <button className="btn" onClick={() => enviar({ tipo: 'iniciarLote', fotos: 450 })}>Iniciar lote en vivo</button>}
-        {!over && col?.juego && <button className="btn" onClick={() => juego(true)}>Iniciar Caza de píxeles</button>}
-        {!over && col?.podio && <button className="btn" onClick={podio}>Mostrar podio</button>}
+        {dentro && !over && act && porAct[act] && <button className="btn" onClick={() => lanzar(porAct[act][0].id)}>Lanzar actividad {act}</button>}
+        {dentro && !over && col?.lote && <button className="btn" onClick={() => enviar({ tipo: 'iniciarLote', fotos: 450 })}>Iniciar lote en vivo</button>}
+        {dentro && !over && col?.juego && <button className="btn" onClick={() => juego(true)}>Iniciar Caza de píxeles</button>}
+        {dentro && !over && col?.podio && <button className="btn" onClick={podio}>Mostrar podio</button>}
         {escena === 'pregunta' && p && c.resultado?.id !== p.id && <><span className="mono cnum">{c.conteo?.respondieron || 0}/{c.conectados} respondieron</span><button className="btn" onClick={revelar}>Revelar respuesta</button></>}
         {p && c.resultado?.id === p.id && over && (iSig < lista.length
           ? <button className="btn" onClick={() => lanzar(lista[iSig].id)}>Siguiente pregunta</button>
@@ -176,12 +181,13 @@ export default function Profesor() {
         {over && escena !== 'fin' && <button className="cbtn" onClick={() => setEscena(null)}>Presentación (Esc)</button>}
         {escena === 'fin' && <button className="btn" onClick={salir}>Salir</button>}
         <span className="grow" />
-        {escena !== 'fin' && <button className="cbtn fin-btn" onClick={finalizar}>Finalizar sesión</button>}
-        <button className="cbtn" onClick={() => setPanel(!panel)} aria-expanded={panel}>Panel en vivo (C)</button>
+        {dentro && escena !== 'fin' && <button className="cbtn fin-btn" onClick={finalizar}>Finalizar sesión</button>}
+        {dentro && <button className="cbtn" onClick={() => setPanel(!panel)} aria-expanded={panel}>Panel en vivo (C)</button>}
         <button className="cbtn" onClick={() => document.documentElement.requestFullscreen?.().catch(() => {})} aria-label="Pantalla completa">⛶</button>
       </nav>
 
-      {panel && (
+      {login}
+      {panel && dentro && (
         <aside className="drawer">
           <div className="drawer-h"><h3>Panel en vivo</h3><button className="cbtn" onClick={() => setPanel(false)}>Cerrar</button></div>
           <p className="note mono">{con.url} · {c.conectados} estudiantes conectados</p>
